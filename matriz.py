@@ -1,29 +1,63 @@
 import tkinter as tk
+from tkinter import ttk, messagebox
 
-class MatrizApp:
-    def __init__(self, master):
-        self.master = master
-        self.master.title("Matriz 3x3")
+def validate_input():
+    try:
+        # Validar grados
+        grados = float(EntryGrados.get())
+        if grados < 0 or grados > 359:
+            messagebox.showerror("Error", "Los grados deben estar entre 0 y 359")
+            return False
+            
+        # Validar eje seleccionado
+        eje = CBoxEje.get()
+        if eje not in ["X", "Y", "Z"]:
+            messagebox.showerror("Error", "Debe seleccionar un eje válido (X, Y, Z)")
+            return False
         
-        self.entries = []
-        for i in range(3):
-            row_entries = []
-            for j in range(3):
-                entry = tk.Entry(master, width=5)
-                entry.grid(row=i, column=j, padx=5, pady=5)
-                row_entries.append(entry)
-            self.entries.append(row_entries)
+        # Validar que las coordenadas no estén vacías
+        if not EntryX.get() or not EntryY.get() or not EntryZ.get():
+            messagebox.showerror("Error", "Las coordenadas no pueden estar vacías")
+            return False
+            
+        # Validar que las coordenadas sean números válidos
+        x = float(EntryX.get())
+        y = float(EntryY.get())
+        z = float(EntryZ.get())
+            
+        # Si todo es válido, continuar con el proceso
+        return True
         
-        self.calculate_button = tk.Button(master, text="Calcular", command=self.calculate)
-        self.calculate_button.grid(row=3, column=0, columnspan=3, pady=10)
-        
-        self.result_label = tk.Label(master, text="")
-        self.result_label.grid(row=4, column=0, columnspan=3)
+    except ValueError:
+        messagebox.showerror("Error", "Por favor ingrese números válidos en todos los campos")
+        return False
 
-    def calculate(self):
-        try:
-            matrix = [[int(self.entries[i][j].get()) for j in range(3)] for i in range(3)]
-            total_sum = sum(sum(row) for row in matrix)
-            self.result_label.config(text=f"Suma total: {total_sum}")
-        except ValueError:
-            self.result_label.config(text="Por favor ingrese solo números enteros.")
+root = tk.Tk()
+screen = ttk.Frame(root, padding="10")  # Agregamos padding al frame
+screen.grid()
+root.title("Matriz")
+LabelGrados=ttk.Label(screen, text="Ingresa los grados de rotacion")
+EntryGrados=ttk.Entry(screen)
+LabelEje=ttk.Label(screen, text="Eje de rotacion")
+CBoxEje=ttk.Combobox(screen, values=["X", "Y", "Z"], state="readonly")  # Make combobox readonly
+LabelCoords=ttk.Label(screen, text="Ingresa las coordenadas del punto")
+EntryX=ttk.Entry(screen)
+EntryY=ttk.Entry(screen)
+EntryZ=ttk.Entry(screen)
+LabelX=ttk.Label(screen, text="x")
+LabelY=ttk.Label(screen, text="y")
+LabelZ=ttk.Label(screen, text="z")
+BotonCalcular=ttk.Button(screen, text="Calcular", command=validate_input)
+LabelGrados.grid(column=0, row=0)
+EntryGrados.grid(column=1, row=0)
+LabelEje.grid(column=0, row=1)
+CBoxEje.grid(column=1, row=1)
+LabelCoords.grid(column=0, row=2)
+LabelX.grid(column=0, row=3)
+LabelY.grid(column=0, row=4)
+LabelZ.grid(column=0, row=5)
+EntryX.grid(column=1, row=3)
+EntryY.grid(column=1, row=4)
+EntryZ.grid(column=1, row=5)
+BotonCalcular.grid(column=1, row=6)
+root.mainloop()
